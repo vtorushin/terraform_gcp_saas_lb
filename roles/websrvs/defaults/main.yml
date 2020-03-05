@@ -1,0 +1,8 @@
+---
+# defaults file for inst_nginx_Nvhosts
+worker_conn: 1024
+bucket_size: 64
+wwwsite: vtor-app.devops.rebrain.srwx.net
+work_dirs_paths:
+  - "/etc/nginx/sites-available"
+  - "/etc/nginx/sites-enabled"

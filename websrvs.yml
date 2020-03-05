@@ -1,0 +1,7 @@
+---
+- name: Deploy nginx and sites
+  hosts: app_web_vm
+  become: yes
+
+  roles: 
+    - websrvs 

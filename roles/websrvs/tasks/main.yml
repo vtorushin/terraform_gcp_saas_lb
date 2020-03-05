@@ -1,0 +1,91 @@
+---
+- name: Chek and print OS Family
+  debug:
+    var: ansible_os_family
+
+- name: yum install nGinx 
+  when: ansible_os_family == "RedHat"
+  yum: 
+    name: 
+      - nginx
+    state: latest
+
+- name: apt install nGinx
+  when: ansible_os_family == "Debian"
+  apt:
+    name:
+      - nginx
+    state: latest
+
+- name: Start nGinx and Enable
+  service: 
+    name: nginx
+    state: started 
+    enabled: yes
+  ignore_errors: yes
+
+- name: Disable SELinux
+  when: ansible_os_family == "RedHat"
+  selinux:
+    state: disabled      
+  notify:
+  - Reboot machine 
+
+- name: Firewall add http rule
+  when: ansible_os_family == "RedHat"
+  firewalld:
+    zone: public
+    service: http
+    permanent: yes
+    state: enabled
+  notify:
+  - Restart firewalld
+
+- name: Create work directorys if it does not exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ work_dirs_paths }}"
+
+- name: Create /var/www/{{ wwwsite }}/html if it does not exist
+  file:
+    path: /var/www/{{ wwwsite }}/html
+    state: directory
+    mode: '0755'
+
+- name: Generated nginx.conf file for RH OS
+  when: ansible_os_family == "RedHat"
+  template: 
+    src:  nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+  - Restart nGinx
+
+- name: Generated nginx.conf file for Deb OS
+  when: ansible_os_family == "Debian"
+  template:
+    src:  nginx.deb.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+  - Restart nGinx
+
+- name: Generated vhostN.conf file
+  template:
+    src:  websiteN.conf.j2
+    dest: /etc/nginx/sites-available/{{ wwwsite }}.conf
+  notify:
+  - Restart nGinx
+
+- name: Create symbolic link  {{ wwwsite }} in the sites-enabled directories
+  file:
+    src: /etc/nginx/sites-available/{{ wwwsite }}.conf
+    dest: /etc/nginx/sites-enabled/{{ wwwsite }}.conf
+    state: link
+
+- name: Generated {{ wwwsite }}.html file 
+  template:
+    src:  siteN.html.j2
+    dest: /var/www/{{ wwwsite }}/html/index.html
+  notify:
+  - Restart nGinx

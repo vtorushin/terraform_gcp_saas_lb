@@ -1,0 +1,11 @@
+---
+# handlers file for inst_nginx_Nvhosts
+- name: Restart nGinx
+  service: name=nginx state=restarted
+
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+
+- name: Reboot machine
+  reboot:
+
