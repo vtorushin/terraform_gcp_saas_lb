@@ -1,0 +1,20 @@
+public_key_path    = "~/.ssh/id_rsa.pub"
+
+gcp_app_name               = ""
+gcp_machine_type           = "f1-micro"
+gcp_project                = ""
+gcp_region                 = "europe-west3"
+gcp_zone                   = "europe-west3-c"
+gcp_private_subnet_cidr_1  = "10.10.1.0/24"
+gcp_image                  = "ubuntu-os-cloud/ubuntu-1804-lts"
+gcp_vpc_count              = "2"
+gcp_cred_file_path         = "key.json"
+
+
+aws_region             = "eu-central-1"
+aws_access_key         = ""
+aws_secret_key         = ""
+aws_dns_main_zone_name = ""
+aws_dns_sub_zone_name  = ""
+aws_dns_type_reord     = "A"
+aws_dns_ttl            = "300"
